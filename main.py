@@ -5,10 +5,8 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 from tweepy import API
-
 import simplejson as json
 import csv
-import keys  # python file that holds my secret key
 
 
 class Listener(StreamListener):
@@ -50,45 +48,50 @@ def get_tweet_by_id(tweet_ID, api):
     results.extend(tweet._json)
 
 
-def get_tweets_by_user(screen_name, api, count=200):
+def get_tweets_by_user(screen_name, api, count=100):
     """ Gets most recent up to 200 (maximum allowed by API) tweets by user """
+    new_tweets = api.user_timeline(screen_name=screen_name, count=100, tweet_mode='extended')
 
-    new_tweets = api.user_timeline(screen_name=screen_name, count=count)
-    objs = [(x._json) for x in new_tweets]
-    results.extend(objs)
-        # results.extend(
-        #     tweet(
-        #         tweetId=item['id_str'],
-        #         createdAt=item['created_at'],
-        #         text=item['text'],
-        #         userId=item['user']['screen_name']))
+    for tweet in new_tweets:
+        results.append(tweet._json)
+    return results
 
 
 def to_csv(tweet_list: list, file_name='tweet_output.csv', delim=','):
-    with open(file_name, "a") as file:
+    with open(file_name, "a", encoding='utf8', newline='') as file:
         csv_writer = csv.writer(file, delimiter=delim)
 
         # write headers to file
-        csv_writer.writerow(['tweetId', 'createdAt', 'text', 'userId'])
-        for tweet_value in tweet_list:
-            csv_writer.writerow(tweet_value.__dict__.values())
+        csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId'])
+        for t in tweet_list:
+            #print(tweet_value.text.encode('utf8', 'replace'))
+            csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId])
+            # csv_writer.writerow([t.tweetId.encode('utf8', 'replace'), t.text.encode('utf8', 'replace'), t.createdAt.encode('utf8', 'replace'), t.userId.encode('utf8', 'replace')])
 
 
 def write_json(data: list, file, overwrite: str):
+
+    data = json.dumps(data, ensure_ascii=False, separators=(',', ': '))
     if overwrite is True:
         filemode = 'w'
     else:
         filemode = 'a'
-    with open(file, filemode) as f:
-        json.dump(data, f, ensure_ascii=False, separators=(',', ': '))
+    with open(file, filemode, encoding='utf8') as f:
+        f.write(data)
 
 
 def read_json(file: str):
-    with open(file, 'r') as f:
-        for line in f:
-            data = json.loads(line, encoding='utf8')
+    with open(file, 'r', encoding='utf8') as f:
+        data = json.load(f, encoding='utf8')
     return data
 
+def make_tweet_objects(filename: str):
+    tweets = read_json(filename)
+    tweets_list = []
+    for t in tweets:
+        t = tweet(t["id_str"], t["created_at"], t["full_text"], t["user"]["id_str"])
+        tweets_list.append(t)
+    return tweets_list
 
 def get_tweet_stream(keywords: list, auth, listener: Listener):
     """ Opens connection with API for Stream Listener """
@@ -97,27 +100,17 @@ def get_tweet_stream(keywords: list, auth, listener: Listener):
     twitterStream.filter(track=keywords, languages=['en'])
 
 
-def setup_auth():
+def setup_auth(
+        ckey='L5JVeOVkHIT0lE0hNHHF5ClVr',
+        consumer_secret='rS4KyDgoz1MCRIeMVdwOqRD706S0cC5jCvxoYTsINbjWCZLl6f',
+        access_token_key='958003558695276544-eUvZUiT2nRfiUWSZjpGGXjYJueh8Khh',
+        access_token_secret='7ter6ZZGa9W7Vr3qBqfFwFB36sUQj8g7EQ9KneNJC5IaZ'):
     """ Sets up authentication for Twitter API """
-    ckey, consumer_secret, access_token_key, access_token_secret = keys.GetSecrets(
-    )
     auth = OAuthHandler(ckey, consumer_secret)  # OAuth object
     auth.set_access_token(access_token_key, access_token_secret)
 
     api = API(auth)
     return auth, api
-
-
-def to_tweets(jsonList):
-    tweets = []
-    for item in jsonList:
-        tweets.append(
-            tweet(
-                tweetId=item['id_str'],
-                createdAt=item['created_at'],
-                text=item['text'],
-                userId=item['user']['screen_name']))
-    return tweets
 
 
 def main(keywords: list,
@@ -126,8 +119,8 @@ def main(keywords: list,
          byUser=False,
          byStream=False,
          timeLimit=None,
-         tweetLimit=50,
-         overwrite=False):
+         tweetLimit=100,
+         overwrite=True):
     global results
     results = []
 
@@ -144,15 +137,7 @@ def main(keywords: list,
             get_tweets_by_user(kw, api, tweetLimit)
 
     write_json(results, filename, overwrite)
-    jsonTweets = read_json(filename)
-
-    tweets = to_tweets(jsonTweets)
-    to_csv(tweets)
-
+    to_csv(make_tweet_objects('Test_Output.json'))
 
 if __name__ == "__main__":
-    main(
-        keywords=['Google'],
-        filename='twitterOutput.json',
-        byUser=True,
-        overwrite=True)
+    main(['Travelers'], 'Test_Output.json', byUser=True)
