@@ -32,14 +32,15 @@ class Listener(StreamListener):
 
 
 class tweet():
-    def __init__(self, tweetId, createdAt, text, userId):
+    def __init__(self, tweetId, createdAt, text, userId, hashtags):
         self.tweetId = tweetId
         self.createdAt = createdAt
         self.text = text
         self.userId = userId
+        self.hashtags = hashtags
 
     def to_record(self) -> list:
-        return [self.tweetId, self.createdAt, self.text, self.userId]
+        return [self.tweetId, self.createdAt, self.text, self.userId, self.hashtags]
 
 
 def get_tweet_by_id(tweet_ID, api):
@@ -65,7 +66,7 @@ def to_csv(tweet_list: list, file_name='tweet_output.csv', delim=','):
         csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId'])
         for t in tweet_list:
             #print(tweet_value.text.encode('utf8', 'replace'))
-            csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId])
+            csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId, t.hashtags])
             # csv_writer.writerow([t.tweetId.encode('utf8', 'replace'), t.text.encode('utf8', 'replace'), t.createdAt.encode('utf8', 'replace'), t.userId.encode('utf8', 'replace')])
 
 
@@ -89,7 +90,10 @@ def make_tweet_objects(filename: str):
     tweets = read_json(filename)
     tweets_list = []
     for t in tweets:
-        t = tweet(t["id_str"], t["created_at"], t["full_text"], t["user"]["id_str"])
+        h_list = []
+        for hash in t["entities"]["hashtags"]:
+            h_list.append(hash["text"])
+        t = tweet(t["id_str"], t["created_at"], t["full_text"], t["user"]["id_str"], h_list)
         tweets_list.append(t)
     return tweets_list
 
