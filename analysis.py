@@ -3,7 +3,6 @@
 import pandas as pd
 import subprocess as sub
 import operator
-import ast
 import re
 
 
@@ -39,7 +38,7 @@ def split_field(t, field):
     if field is "text":
         words = t.split()
     else:
-        words = ast.literal_eval(t)
+        words = eval(t)
     return words
 
 def clean_word(word):
@@ -52,4 +51,4 @@ def clean_word(word):
 if __name__ == "__main__":
     sub.call(["python", "main.py"])
     csv = load_csv('tweet_output.csv')
-    print(word_counts(csv, "text"))
+    print(word_counts(csv, "hashtags"))
