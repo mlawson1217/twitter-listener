@@ -1,6 +1,6 @@
 import pandas as pd
+import subprocess as sub
 import operator
-
 
 def load_csv(file: str):
     df = pd.read_csv(file, encoding='utf8', delimiter='|')
@@ -27,5 +27,6 @@ def word_counts(data):
 
 
 if __name__ == "__main__":
+    sub.call(["python", "main.py"])
     csv = load_csv('tweet_output.csv')
     print(word_counts(csv))
