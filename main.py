@@ -39,7 +39,7 @@ class tweet():
         self.userId = userId
         self.hashtags = hashtags
 
-    def to_record(self) -> list:
+    def to_record(self):
         return [self.tweetId, self.createdAt, self.text, self.userId, self.hashtags]
 
 
@@ -58,12 +58,12 @@ def get_tweets_by_user(screen_name, api, count=100):
     return results
 
 
-def to_csv(tweet_list: list, file_name='tweet_output.csv', delim=','):
-    with open(file_name, "a", encoding='utf8', newline='') as file:
+def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
+    with open(file_name, "a", encoding='utf8') as file:
         csv_writer = csv.writer(file, delimiter=delim)
 
         # write headers to file
-        csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId'])
+        csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId', 'hashtags'])
         for t in tweet_list:
             #print(tweet_value.text.encode('utf8', 'replace'))
             csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId, t.hashtags])
@@ -93,6 +93,7 @@ def make_tweet_objects(filename: str):
         h_list = []
         for hash in t["entities"]["hashtags"]:
             h_list.append(hash["text"])
+
         t = tweet(t["id_str"], t["created_at"], t["full_text"], t["user"]["id_str"], h_list)
         tweets_list.append(t)
     return tweets_list

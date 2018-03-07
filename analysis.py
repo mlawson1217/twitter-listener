@@ -1,7 +1,7 @@
 import pandas as pd
 
 def load_csv(file: str):
-    df = pd.read_csv(file, encoding='utf8', delimiter=',')
+    df = pd.read_csv(file, encoding='utf8', delimiter='|')
     return df
 
 
