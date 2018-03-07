@@ -9,9 +9,6 @@ import simplejson as json
 import csv
 import os
 
-
-
-
 class Listener(StreamListener):
     def __init__(self, time_limit, tweet_limit=1):
         """ Initializer for Listener Class """
