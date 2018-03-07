@@ -1,12 +1,29 @@
 import pandas as pd
+import operator
+
 
 def load_csv(file: str):
     df = pd.read_csv(file, encoding='utf8', delimiter='|')
     return df
 
-def word_counts(ignore: list, data: df):
-    for t in df:
+ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where", "why", "for", "how", "your", "a", "to"]
+
+def word_counts(data):
+    count_dict = {}
+    for t in data["text"]:
+        words = t.split()
+        for word in words:
+            if word in ignore_words:
+                pass
+            else:
+                if word in count_dict.keys():
+                    count_dict[word] = (count_dict[word] + 1)
+                else:
+                    count_dict[word] = 1
+    sorted_dict = sorted(count_dict.items(), key=operator.itemgetter(1))
+    return sorted_dict
 
 
 if __name__ == "__main__":
-    print(load_csv('tweet_output.csv'))
+    csv = load_csv('tweet_output.csv')
+    print(word_counts(csv))
