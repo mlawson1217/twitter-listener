@@ -7,6 +7,9 @@ from tweepy.streaming import StreamListener
 from tweepy import API
 import simplejson as json
 import csv
+import os
+
+
 
 
 class Listener(StreamListener):
@@ -59,6 +62,11 @@ def get_tweets_by_user(screen_name, api, count=100):
 
 
 def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
+    try:
+        os.remove(file_name)
+    except OSError:
+        pass
+
     with open(file_name, "a", encoding='utf8') as file:
         csv_writer = csv.writer(file, delimiter=delim)
 
@@ -72,6 +80,10 @@ def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
 
 
 def write_json(data: list, file, overwrite: str):
+    try:
+        os.remove(file)
+    except OSError:
+        pass
 
     data = json.dumps(data, ensure_ascii=False, separators=(',', ': '))
     if overwrite is True:
