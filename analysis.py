@@ -9,7 +9,9 @@ def load_csv(file: str):
     return df
 
 ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where",
-"why", "for", "how", "your", "a", "to", "more", "[nl]"]
+"why", "for", "how", "your", "a", "to", "more", "[nl]", "of", "from", "with",
+"in", "you", "help", "are", "can", "is", "on", "this", "at", "these", "be",
+"make", "by", "our", "get", "if", "some", "see", "have", "do", "we", "new"]
 
 def word_counts(data):
     count_dict = {}
