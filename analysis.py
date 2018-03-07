@@ -6,7 +6,7 @@ def load_csv(file: str):
     df = pd.read_csv(file, encoding='utf8', delimiter='|')
     return df
 
-ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where", "why", "for", "how", "your", "a", "to"]
+ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where", "why", "for", "how", "your", "a", "to", "more", "[nl]"]
 
 def word_counts(data):
     count_dict = {}
