@@ -4,16 +4,18 @@ import pandas as pd
 import subprocess as sub
 import operator
 import ast
+import re
 
-def load_csv(file: str):
-    """ Load in csv as dataframe """
-    df = pd.read_csv(file, encoding='utf8', delimiter='|')
-    return df
 
 ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where",
 "why", "for", "how", "your", "a", "to", "more", "[nl]", "of", "from", "with",
 "in", "you", "help", "are", "can", "is", "on", "this", "at", "these", "be",
 "make", "by", "our", "get", "if", "some", "see", "have", "do", "we", "new", "-", "--", "&amp;"]
+
+def load_csv(file: str):
+    """ Load in csv as dataframe """
+    df = pd.read_csv(file, encoding='utf8', delimiter='|')
+    return df
 
 def word_counts(data, field):
     """ Counts word frequency in total tweets """
@@ -42,8 +44,9 @@ def split_field(t, field):
 
 def clean_word(word):
     """ Cleans words by lowercasing and replacing """
-    word = word.lower()
-    word = word.replace(":", "")
+    word = word.lower().strip()
+    regex = re.compile('[,/:\!?".]')
+    word = regex.sub('', word)
     return word
 
 if __name__ == "__main__":

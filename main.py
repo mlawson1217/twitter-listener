@@ -70,10 +70,8 @@ def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
         # write headers to file
         csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId', 'hashtags'])
         for t in tweet_list:
-            #print(tweet_value.text.encode('utf8', 'replace'))
             t.text = t.text.replace("\n", " [nl] ")
             csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId, t.hashtags])
-            # csv_writer.writerow([t.tweetId.encode('utf8', 'replace'), t.text.encode('utf8', 'replace'), t.createdAt.encode('utf8', 'replace'), t.userId.encode('utf8', 'replace')])
 
 
 def write_json(data: list, file, overwrite: str):
