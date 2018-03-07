@@ -66,6 +66,7 @@ def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
         csv_writer.writerow(['tweetId', 'text', 'createdAt', 'userId', 'hashtags'])
         for t in tweet_list:
             #print(tweet_value.text.encode('utf8', 'replace'))
+            t.text = t.text.replace("\n", " [nl] ")
             csv_writer.writerow([t.tweetId, t.text, t.createdAt, t.userId, t.hashtags])
             # csv_writer.writerow([t.tweetId.encode('utf8', 'replace'), t.text.encode('utf8', 'replace'), t.createdAt.encode('utf8', 'replace'), t.userId.encode('utf8', 'replace')])
 
@@ -93,7 +94,6 @@ def make_tweet_objects(filename: str):
         h_list = []
         for hash in t["entities"]["hashtags"]:
             h_list.append(hash["text"])
-
         t = tweet(t["id_str"], t["created_at"], t["full_text"], t["user"]["id_str"], h_list)
         tweets_list.append(t)
     return tweets_list
