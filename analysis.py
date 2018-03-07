@@ -6,6 +6,7 @@ import operator
 import ast
 
 def load_csv(file: str):
+    """ Load in csv as dataframe """
     df = pd.read_csv(file, encoding='utf8', delimiter='|')
     return df
 
@@ -15,6 +16,7 @@ ignore_words = ["the", "and", "it", "was", "who", "what", "when", "where",
 "make", "by", "our", "get", "if", "some", "see", "have", "do", "we", "new", "-", "--", "&amp;"]
 
 def word_counts(data, field):
+    """ Counts word frequency in total tweets """
     count_dict = {}
     for t in data[field]:
         words = split_field(t, field)
@@ -31,6 +33,7 @@ def word_counts(data, field):
     return sorted_dict
 
 def split_field(t, field):
+    """ Decides how to handle text vs hashtag field splitting """
     if field is "text":
         words = t.split()
     else:
@@ -38,6 +41,7 @@ def split_field(t, field):
     return words
 
 def clean_word(word):
+    """ Cleans words by lowercasing and replacing """
     word = word.lower()
     word = word.replace(":", "")
     return word

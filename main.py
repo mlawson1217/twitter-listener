@@ -77,6 +77,7 @@ def to_csv(tweet_list: list, file_name='tweet_output.csv', delim='|'):
 
 
 def write_json(data: list, file, overwrite: str):
+    """ Write to JSON file """
     try:
         os.remove(file)
     except OSError:
@@ -92,11 +93,13 @@ def write_json(data: list, file, overwrite: str):
 
 
 def read_json(file: str):
+    """ Read in JSON """
     with open(file, 'r', encoding='utf8') as f:
         data = json.load(f, encoding='utf8')
     return data
 
 def make_tweet_objects(filename: str):
+    """ Making tweet objects """
     tweets = read_json(filename)
     tweets_list = []
     for t in tweets:
